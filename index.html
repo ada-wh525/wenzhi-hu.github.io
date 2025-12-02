@@ -1,73 +1,507 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GitHub Page</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wenzhi Hu - Software & ML Engineer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff; /* Changed to white */
+            color: #111827; /* Changed to dark gray (gray-900) */
+        }
+
+        /* -- Page Load Animations -- */
+        
+        /* Base class for elements animated on load */
+        .animate-load-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Navbar fade-down animation */
+        .animate-nav-down {
+             opacity: 0;
+            transform: translateY(-100%);
+            animation: navDown 0.8s ease-out 0.5s forwards; /* 0.5s delay */
+        }
+        
+        @keyframes navDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* -- Scroll-Triggered Animations -- */
+        
+        /* Base state for elements to be revealed on scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1s cubic-bezier(0.17, 0.84, 0.44, 1), transform 1s cubic-bezier(0.17, 0.84, 0.44, 1);
+        }
+        
+        /* Variations for different directions */
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: opacity 1s cubic-bezier(0.17, 0.84, 0.44, 1), transform 1s cubic-bezier(0.17, 0.84, 0.44, 1);
+        }
+        
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: opacity 1s cubic-bezier(0.17, 0.84, 0.44, 1), transform 1s cubic-bezier(0.17, 0.84, 0.44, 1);
+        }
+        
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 1s cubic-bezier(0.17, 0.84, 0.44, 1), transform 1s cubic-bezier(0.17, 0.84, 0.44, 1);
+        }
+
+        /* The state when the element becomes visible */
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .reveal-left.visible,
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .reveal-scale.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* Animated underline for section headers */
+        .header-underline {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 8px; /* Space for the underline */
+        }
+        
+        .header-underline::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #2563eb; /* lime-400 -> blue-600 */
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.8s ease-out;
+        }
+        
+        .reveal.visible .header-underline::after {
+            transform: scaleX(1);
+        }
+        
+        /* Glowing button effect */
+        .glow-button {
+             transition: all 0.3s ease;
+        }
+        
+        .glow-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px 5px rgba(37, 99, 235, 0.4); /* lime-400 glow -> blue-600 glow */
+        }
+        
+        /* Project card hover effect */
+        .project-card {
+            transition: all 0.3s ease-out;
+        }
+        
+        .project-card:hover {
+            transform: scale(1.03) translateY(-5px);
+            box-shadow: 0 10px 30px -5px rgba(37, 99, 235, 0.1); /* lime-400 glow -> blue-600 glow */
+        }
+        
+        /* Custom message box for form submission */
+        #message-box {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: bottom 0.5s ease-in-out;
+            z-index: 1000;
+        }
+        
+        #message-box.show {
+            bottom: 20px;
+        }
+
+    </style>
 </head>
-<body>
+<body class="bg-white text-gray-900 overflow-x-hidden">
 
-  <div id="starfield"></div>
+    <!-- Header & Navigation -->
+    <header class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md z-50 animate-nav-down border-b border-gray-200">
+        <nav class="container mx-auto max-w-6xl px-6 py-5 flex justify-between items-center">
+            <!-- Logo / Initials -->
+            <a href="#home" class="text-3xl font-black text-blue-600 transition hover:text-blue-500">WH.</a>
+            
+            <!-- Nav Links -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300">About</a>
+                <a href="#education" class="text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300">Education</a>
+                <a href="#experience" class="text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300">Experience</a>
+                <a href="#projects" class="text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300">Projects</a>
+                <a href="#contact" class="text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors duration-300">Contact</a>
+            </div>
+            
+            <!-- Mobile Menu Button (Placeholder) -->
+            <button class="md:hidden text-gray-700 hover:text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+    </header>
 
-  <nav class="nav-bar">
-    <a href="#home" class="nav-link">Initial Page</a>
-    <a href="#about" class="nav-link">About</a>
-    <a href="#projects" class="nav-link">Project</a>
-    <a href="#contact" class="nav-link">Contact</a>
-  </nav>
+    <main class="container mx-auto max-w-6xl px-6">
 
+        <!-- Section: Hero -->
+        <section id="home" class="min-h-screen flex flex-col justify-center items-start pt-20">
+            <h1 class="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-tighter">
+                <!-- Staggered load-in animation for each word -->
+                <span class="block animate-load-in" style="animation-delay: 200ms;">Wenzhi</span>
+                <span class="block text-blue-600 animate-load-in" style="animation-delay: 400ms;">Hu</span>
+                <span class="block animate-load-in" style="animation-delay: 600ms;">Software Engineer</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-700 max-w-2xl mt-6 animate-load-in" style="animation-delay: 800ms;">
+                MSc student at Imperial College London. Passionate about machine learning, mobile development, and building high-performance systems.
+            </p>
+            <a href="#projects" class="glow-button mt-10 bg-blue-600 text-white text-lg font-bold py-4 px-10 rounded-lg animate-load-in" style="animation-delay: 1000ms;">
+                View My Work
+            </a>
+        </section>
 
-  <section id="home" class="hero-section">
-    <div class="hero-content">
-      <h1 class="hero-title animated-title">ME PAGE</h1>
-      <p class="hero-subtitle animated-subtitle">BY H5, CSS, JS</p>
-      <button class="hero-button" onclick="scrollToSection('about')">Know More</button>
+        <!-- Section: About -->
+        <section id="about" class="py-24 md:py-32">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
+                <div class="md:col-span-2">
+                    <h2 class="text-4xl md:text-5xl font-bold reveal reveal-left">
+                        <span class="header-underline">About Me</span>
+                    </h2>
+                </div>
+                <div class="md:col-span-3 space-y-6">
+                    <p class="text-xl text-gray-700 leading-relaxed reveal reveal-right">
+                        Hello! I'm Wenzhi, a software engineer with a First Class BSc in Computer Science from Cardiff University, now pursuing an MSc in Applied Computational Science at Imperial College London.
+                    </p>
+                    <p class="text-xl text-gray-700 leading-relaxed reveal reveal-right" style="transition-delay: 150ms;">
+                        I thrive on solving complex problems, from optimizing lightweight ML models for mobile devices to designing robust backend systems with Python and Java. I'm always eager to learn and collaborate on challenging projects.
+                    </p>
+                    
+                    <h3 class="text-2xl font-bold pt-8 reveal" style="transition-delay: 200ms;">Languages</h3>
+                    <div class="flex flex-wrap gap-3 reveal" style="transition-delay: 250ms;">
+                        <!-- Staggered animation for each tag -->
+                        <span class="skill-tag reveal" style="transition-delay: 300ms;">Python</span>
+                        <span class="skill-tag reveal" style="transition-delay: 350ms;">Java</span>
+                        <span class="skill-tag reveal" style="transition-delay: 400ms;">Golang</span>
+                        <span class="skill-tag reveal" style="transition-delay: 450ms;">SQL</span>
+                        <span class="skill-tag reveal" style="transition-delay: 500ms;">Kotlin</span>
+                        <span class="skill-tag reveal" style="transition-delay: 550ms;">HTML/CSS/JS</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold pt-8 reveal" style="transition-delay: 200ms;">Tools & Technologies</h3>
+                    <div class="flex flex-wrap gap-3 reveal" style="transition-delay: 250ms;">
+                        <!-- Staggered animation for each tag -->
+                        <span class="skill-tag reveal" style="transition-delay: 300ms;">Git</span>
+                        <span class="skill-tag reveal" style="transition-delay: 350ms;">Linux</span>
+                        <span class="skill-tag reveal" style="transition-delay: 400ms;">PyTorch</span>
+                        <span class="skill-tag reveal" style="transition-delay: 450ms;">QuickBI</span>
+                        <span class="skill-tag reveal" style="transition-delay: 500ms;">Charles</span>
+                        <span class="skill-tag reveal" style="transition-delay: 550ms;">MatLab</span>
+                        <span class="skill-tag reveal" style="transition-delay: 600ms;">Axure</span>
+                        <span class="skill-tag reveal" style="transition-delay: 650ms;">Android Studio</span>
+                        <span class="skill-tag reveal" style="transition-delay: 700ms;">ADB</span>
+                        <span class="skill-tag reveal" style="transition-delay: 750ms;">Postman</span>
+                        <span class="skill-tag reveal" style="transition-delay: 800ms;">Airtes</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Education -->
+        <section id="education" class="py-24 md:py-32">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center reveal reveal-left">
+                <span class="header-underline">Education</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Education 1 -->
+                <div class="project-card bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-2xl reveal-scale">
+                    <div class="p-8">
+                        <h3 class="text-3xl font-bold mb-3">Imperial College London</h3>
+                        <p class="text-xl text-blue-600 mb-4">MSc, Applied Computational Science & Engineering</p>
+                        <p class="text-gray-600 mb-6">Sep 2025 - Sep 2026 | London, UK</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tag">Deep Learning</span>
+                            <span class="tag">Advanced Programming</span>
+                            <span class="tag">Data Statistics</span>
+                            <span class="tag">Parallel Programming</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Education 2 -->
+                <div class="project-card bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-2xl reveal-scale" style="transition-delay: 150ms;">
+                    <div class="p-8">
+                        <h3 class="text-3xl font-bold mb-3">Cardiff University</h3>
+                        <p class="text-xl text-blue-600 mb-4">BSc, Computer Science (First Class)</p>
+                        <p class="text-gray-600 mb-6">Sep 2022 - Jun 2025 | Cardiff, UK</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tag">Data Structures</span>
+                            <span class="tag">Deep Learning (Python)</span>
+                            <span class="tag">OOP (Java)</span>
+                            <span class="tag">HCI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Experience -->
+        <section id="experience" class="py-24 md:py-32">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center reveal reveal-right">
+                <span class="header-underline">Experience</span>
+            </h2>
+            
+            <div class="space-y-12 max-w-4xl mx-auto">
+                <!-- Experience 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal reveal-left">
+                    <div class="md:col-span-1">
+                        <h3 class="text-2xl font-bold text-blue-600">iDreamSky</h3>
+                        <p class="text-lg font-medium">Test Intern (Strinova Project)</p>
+                        <p class="text-gray-600 mt-1">Jun 2025 - Sep 2025</p>
+                        <p class="text-gray-600">Shenzhen, China</p>
+                    </div>
+                    <div class="md:col-span-2 bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                        <ul class="list-disc list-outside space-y-3 text-gray-700">
+                            <li>Tested PC and mobile game builds, managing bug lifecycles with SVN and TAPD.</li>
+                            <li>Wrote and executed test cases for feature updates and hotfixes.</li>
+                            <li>Participated in overseas payment sandbox testing (e.g., Checkout).</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Experience 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal reveal-right">
+                    <div class="md:col-span-1">
+                        <h3 class="text-2xl font-bold text-blue-600">illumenera(Ghwar Department)</h3>
+                        <p class="text-lg font-medium">Test Development Intern</p>
+                        <p class="text-gray-600 mt-1">Jun 2024 - Sep 2024</p>
+                        <p class="text-gray-600">Shanghai, China</p>
+                    </div>
+                    <div class="md:col-span-2 bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                        <ul class="list-disc list-outside space-y-3 text-gray-700">
+                            <li>Tested product prototypes for an application with over 700,000 users.</li>
+                            <li>Analyzed user behavior data using QuickBI to support product optimization.</li>
+                            <li>Used Charles and Wireshark for network packet sniffing to locate and analyze performance bottlenecks.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Projects -->
+        <section id="projects" class="py-24 md:py-32">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center reveal reveal-left">
+                <span class="header-underline">Key Projects</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Project 1 -->
+                <div class="project-card bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-2xl reveal-scale">
+                    <img src="https://placehold.co/600x400/ffffff/2563eb?text=Emotion+Recognition+App" alt="Emotion Recognition App" class="w-full h-64 object-cover">
+                    <div class="p-8">
+                        <h3 class="text-3xl font-bold mb-3">Multimodal Emotion Recognition App</h3>
+                        <p class="text-gray-700 mb-6">Developed a real-time Android app for emotion analysis using facial and voice data. Designed and trained a custom lightweight facial model (2.1MB) using PyTorch, deployed on-device with Kotlin and CameraX.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tag">Kotlin</span>
+                            <span class="tag">PyTorch</span>
+                            <span class="tag">Android</span>
+                            <span class="tag">Machine Learning</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="project-card bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-2xl reveal-scale" style="transition-delay: 150ms;">
+                    <img src="https://placehold.co/600x400/ffffff/2563eb?text=Crew+Management+System" alt="Crew Management System" class="w-full h-64 object-cover">
+                    <div class="p-8">
+                        <h3 class="text-3xl font-bold mb-3">Crew Management System</h3>
+                        <p class="text-gray-700 mb-6">Built the core backend logic in Python on a Raspberry Pi, using GPIO and NFC for crew card identification. Designed the SQLite database schema for crew information, operation logs, and permission verification.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="tag">Python</span>
+                            <span class="tag">Raspberry Pi</span>
+                            <span class="tag">NFC</span>
+                            <span class="tag">SQLite</span>
+                            <span class="tag">Backend</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <!-- Section: Contact -->
+        <section id="contact" class="py-24 md:py-32">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold reveal reveal-left">
+                    <span class="header-underline">Get In Touch</span>
+                </h2>
+                <p class="text-xl text-gray-700 leading-relaxed mt-8 mb-12 reveal reveal-right">
+                    I'm actively seeking new opportunities and collaborations. Whether you have a question or just want to connect, feel free to reach out!
+                </p>
+                
+                <form id="contact-form" class="space-y-6 reveal" style="transition-delay: 150ms;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <input type="text" placeholder="Your Name" class="form-input w-full bg-white border-2 border-gray-300 rounded-lg py-3 px-4 text-gray-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/50 transition-all duration-300" required>
+                        <input type="email" placeholder="Your Email" class="form-input w-full bg-white border-2 border-gray-300 rounded-lg py-3 px-4 text-gray-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/50 transition-all duration-300" required>
+                    </div>
+                    <div>
+                        <textarea placeholder="Your Message" rows="6" class="form-input w-full bg-white border-2 border-gray-300 rounded-lg py-3 px-4 text-gray-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/50 transition-all duration-300" required></textarea>
+                    </div>
+                    <button type="submit" class="glow-button w-full md:w-auto bg-blue-600 text-white text-lg font-bold py-4 px-12 rounded-lg">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 mt-20">
+        <div class="container mx-auto max-w-6xl px-6 py-12 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <p class="text-gray-600 mb-4 md:mb-0">
+                &copy; 2025 Wenzhi Hu. All rights reserved.
+            </p>
+            <!-- Social Links -->
+            <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
+                <a href="https://github.com/wenzhi-hu" class="text-gray-600 hover:text-blue-600 transition-colors" target="_blank" rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://ada-wh525.github.io/wenzhi-hu.github.io/" class="text-gray-600 hover:text-blue-600 transition-colors" target="_blank" rel="noopener noreferrer">
+                    Personal Site
+                </a>
+                <a href="mailto:wenzhi499@qq.com" class="text-gray-600 hover:text-blue-600 transition-colors">
+                    wenzhi499@qq.com
+                </a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Custom Message Box for Form -->
+    <div id="message-box" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg">
+        Message sent successfully!
     </div>
-  </section>
-
-  <section id="about" class="content-section">
-    <h2 class="section-title">About Me</h2>
-    <p class="section-text">
-      Cardiff University, Computer Science, 2022-2025<br />
-      Imperial College London, ACSE, 2025-2026
-    </p>
-  </section>
-
-  <section id="projects" class="content-section">
-    <h2 class="section-title">My Project</h2>
-    <div class="project-list">
-      <div class="project-item">
-        <h3>Python Flask web shopping website (personal)</h3>
-        <p>A local web created by HTML, Python, SQLite, JavaScript and other tools. </p>
-        <p>Users can be allowed to add, select, view shopping websites, and make simulated payments.</p>
-      </div>
-      <div class="project-item">
-        <h3>Raspberry Pi Sailor Management System (team)</h3>
-        <p>A management system made by Raspberry Pi, NFC board, PyQT5, and SQLite. Allow administrator to login, operate, batch import of crew data, and support deletion and modification operations. Allow crew members
-            to log in through NFC to ensure safe travel.<br />
-            This ensures a secure and efficient process.</p>
-      </div>
-      <div class="project-item">
-        <h3>Android Based Facial Emotion Recognition App</h3>
-        <p>Based on Opencv, developed an app used to detect people’s facial emotion and voice emotion, combined together and get a reasoning
-            results.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact" class="content-section contact-section">
-    <h2 class="section-title">Contact Me</h2>
-    <p class="section-text">
-      550677115@qq.com
-    </p>
-  </section>
-
-  <footer class="footer">
-    <p>© 2025 My GitHub Page</p>
-  </footer>
 
 
-  <script src="script.js"></script>
+    <!-- Page Scripts -->
+    <script>
+        // --- Smooth Scrolling for Nav Links ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // --- Intersection Observer for Scroll-Triggered Animations ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Optional: unobserve after animation to save resources
+                        // observer.unobserve(entry.target); 
+                    }
+                    // Optional: remove 'visible' class when it leaves the viewport to re-animate
+                    /*
+                    else {
+                        entry.target.classList.remove('visible');
+                    }
+                    */
+                });
+            }, {
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            });
+
+            // Observe all elements with the 'reveal' class (and its variants)
+            const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+            revealElements.forEach((el) => {
+                observer.observe(el);
+            });
+            
+            // --- Custom CSS class definitions for shared styles ---
+            // We apply these directly in the HTML now for simplicity.
+            
+            const skillTagClasses = 'bg-gray-100 text-blue-700 py-2 px-4 rounded-full font-medium transition-colors duration-300 hover:bg-blue-600 hover:text-white cursor-pointer';
+            document.querySelectorAll('.skill-tag').forEach(tag => {
+                tag.className += ` ${skillTagClasses}`;
+            });
+
+            const projectTagClasses = 'text-sm bg-gray-200 text-blue-600 py-1 px-3 rounded-full font-medium';
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.className += ` ${projectTagClasses}`;
+            });
+            
+            /* REMOVED: Form input classes are now applied directly in the HTML.
+            const formInputClasses = ...
+            document.querySelectorAll('.form-input').forEach(...)
+            */
+            
+            
+            // --- Contact Form Submission ---
+            const form = document.getElementById('contact-form');
+            const messageBox = document.getElementById('message-box');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent actual form submission
+                
+                // Show custom message box
+                messageBox.classList.add('show');
+                
+                // Reset form
+                form.reset();
+                
+                // Hide message box after 3 seconds
+                setTimeout(() => {
+                    messageBox.classList.remove('show');
+                }, 3000);
+            });
+        });
+    </script>
+
 </body>
 </html>
